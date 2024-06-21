@@ -41,13 +41,6 @@ class TranslateApiController extends AbstractCreateController
         $source = Arr::get($request->getParsedBody(), 's');
         $locale = Arr::get($request->getParsedBody(), 'l');
 
-        Locale::updateOrCreate([
-            "hash" => "1234",
-            'source' => $source,
-            'locale' => $locale,
-            'translation' => "got it"
-        ]);
-
         $t = new TranslatorService($this->google_api_key);
 
         $string = "<p>I am <b>a <u>very</u></b> stubborn boy!</p>";

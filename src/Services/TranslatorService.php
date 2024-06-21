@@ -5,6 +5,7 @@ namespace Dhtml\FlarumLanguageTranslator\Services;
 use Dhtml\FlarumLanguageTranslator\Locale;
 use Google\Cloud\Core\Exception\GoogleException;
 use Google\Cloud\Translate\V2\TranslateClient;
+use Carbon\Carbon;
 
 class TranslatorService
 {
@@ -48,12 +49,9 @@ class TranslatorService
         $_locale = Locale::query()->where("source",$source)
             ->where("locale",$locale)
             ->first();
-        /*
-
         if($_locale) {
             return $_locale->translation;
         }
-        */
 
 
         $translation = $source;
@@ -68,28 +66,15 @@ class TranslatorService
             ]);
             $translation = $tresult['text'];
 
-            /*
-            $_locale = Locale::build($hash,$source,$locale,$translation);
-            $_locale->save();
-            */
-
-            /*
-            $_locale = new Locale;
-            $_local->source = Arr::get($data, 'source');
-            $_local->locale = Arr::get($data, 'locale');
-            $_local->translation = Arr::get($data, 'translation');
-            $_local->save();
-            */
-
-
-            /*
             Locale::firstOrCreate([
-                "hash" => $cacheKey,
+                "hash" => $hash,
                 "source"=>$source ,
                 "locale"=>$locale,
-                "translation"=>$translation
+                "translation"=>$translation,
+                "created_at" => Carbon::now(),
+                "updated_at" => Carbon::now(),
             ]);
-            */
+
         } catch (GoogleException $e) {
             print_r($e);
         }
