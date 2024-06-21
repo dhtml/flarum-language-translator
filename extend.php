@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Dhtml\\FlarumLanguageTranslator;
+namespace Dhtml\FlarumLanguageTranslator;
 
 use Flarum\Extend;
 
