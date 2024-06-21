@@ -18,7 +18,7 @@ class LocaleSerializer extends AbstractSerializer
     /**
      * {@inheritdoc}
      */
-    protected $type = 'locales';
+    protected $type = 'lc';
 
     /**
      * @param Locale $locale
@@ -30,10 +30,7 @@ class LocaleSerializer extends AbstractSerializer
         $attributes = [
             //'id'  => $locale->id,
             't' => $locale->t,
-            'source' => $locale->source,
-            'locale' => $locale->locale,
         ];
-
         return $attributes;
     }
 }

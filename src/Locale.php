@@ -28,7 +28,7 @@ class Locale extends AbstractModel
     protected $dates = ['created_at', 'updated_at'];
 
     protected $fillable = [
-        'hash', 'source','locale','translation',
+        'hash', 'source','locale','translation','created_at','updated_at',
     ];
 
     /**

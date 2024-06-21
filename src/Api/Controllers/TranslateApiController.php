@@ -43,16 +43,11 @@ class TranslateApiController extends AbstractCreateController
 
         $t = new TranslatorService($this->google_api_key);
 
-        $string = "<p>I am <b>a <u>very</u></b> stubborn boy!</p>";
-        $locale = "fr";
-        $translate = $t->get($string,$locale);
+        $translate = $t->get($source,$locale);
 
         return (object) [
-            "id" => 4,
-            "source" => $source,
-            "locale" => $locale,
+            "id" => 1,
             "t" => $translate,
-            "title" => "I love you",
         ];
     }
 }

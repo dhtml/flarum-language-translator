@@ -53,7 +53,6 @@ class TranslatorService
             return $_locale->translation;
         }
 
-
         $translation = $source;
 
         try {
