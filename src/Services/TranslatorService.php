@@ -44,10 +44,11 @@ class TranslatorService
      */
     protected function translate($source, $locale , $hash)
     {
-        /*
-        $_locale = Locale::where("source",$source)
+
+        $_locale = Locale::query()->where("source",$source)
             ->where("locale",$locale)
             ->first();
+        /*
 
         if($_locale) {
             return $_locale->translation;
@@ -67,8 +68,19 @@ class TranslatorService
             ]);
             $translation = $tresult['text'];
 
+            /*
             $_locale = Locale::build($hash,$source,$locale,$translation);
             $_locale->save();
+            */
+
+            /*
+            $_locale = new Locale;
+            $_local->source = Arr::get($data, 'source');
+            $_local->locale = Arr::get($data, 'locale');
+            $_local->translation = Arr::get($data, 'translation');
+            $_local->save();
+            */
+
 
             /*
             Locale::firstOrCreate([

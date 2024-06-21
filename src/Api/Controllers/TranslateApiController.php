@@ -4,8 +4,10 @@ namespace Dhtml\FlarumLanguageTranslator\Api\Controllers;
 
 use Dhtml\FlarumLanguageTranslator\Api\Serializer\LocaleSerializer;
 
+use Dhtml\FlarumLanguageTranslator\Locale;
 use Dhtml\FlarumLanguageTranslator\Services\TranslatorService;
-use Flarum\Api\Controller\AbstractShowController;
+use Flarum\Api\Controller\AbstractCreateController;
+
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
@@ -15,7 +17,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Flarum\Http\RequestUtil;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
-class TranslateApiController extends AbstractShowController
+class TranslateApiController extends AbstractCreateController
 {
     public $serializer = LocaleSerializer::class;
 
@@ -34,9 +36,17 @@ class TranslateApiController extends AbstractShowController
 
     protected function data(ServerRequestInterface $request, Document $document)
     {
+
         $code = Arr::get($request->getQueryParams(), 'code');
         $source = Arr::get($request->getParsedBody(), 's');
         $locale = Arr::get($request->getParsedBody(), 'l');
+
+        Locale::updateOrCreate([
+            "hash" => "1234",
+            'source' => $source,
+            'locale' => $locale,
+            'translation' => "got it"
+        ]);
 
         $t = new TranslatorService($this->google_api_key);
 

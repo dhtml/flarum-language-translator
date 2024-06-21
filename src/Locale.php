@@ -3,7 +3,10 @@
 namespace Dhtml\FlarumLanguageTranslator;
 
 use Carbon\Carbon;
+
 use Flarum\Database\AbstractModel;
+use Flarum\Database\ScopeVisibilityTrait;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property string $hash
@@ -11,8 +14,10 @@ use Flarum\Database\AbstractModel;
  * @property string $locale
  * @property string $translation
  */
-abstract class Locale extends AbstractModel
+class Locale extends AbstractModel
 {
+    use ScopeVisibilityTrait;
+
     /**
      * The table associated with the model.
      *
@@ -22,7 +27,9 @@ abstract class Locale extends AbstractModel
 
     protected $dates = ['created_at', 'updated_at'];
 
-
+    protected $fillable = [
+        'hash', 'source','locale','translations',
+    ];
 
     /**
      * The text formatter instance.

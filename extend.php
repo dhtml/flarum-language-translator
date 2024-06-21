@@ -12,7 +12,6 @@
 namespace Dhtml\FlarumLanguageTranslator;
 
 use Dhtml\FlarumLanguageTranslator\Api\Controllers\TranslateApiController;
-use Dhtml\FlarumLanguageTranslator\Controllers\HelloWorld;
 use Flarum\Extend;
 
 
@@ -25,10 +24,9 @@ return [
         ->css(__DIR__.'/less/admin.less'),
     new Extend\Locales(__DIR__.'/locale'),
 
-    (new Extend\Routes('forum'))
-        ->get('/HelloWorld', 'tpages.helloworld', HelloWorld::class)
-    ,
 
     (new Extend\Routes('api'))
         ->post('/trans', 'language.translator.index', TranslateApiController::class),
+
+    (new Extend\Model(Locale::class)),
 ];
