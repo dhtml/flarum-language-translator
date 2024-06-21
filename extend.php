@@ -13,6 +13,8 @@ namespace Dhtml\FlarumLanguageTranslator;
 
 use Flarum\Extend;
 
+use Dhtml\FlarumLanguageTranslator\Api\Controller;
+
 return [
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')
@@ -21,4 +23,7 @@ return [
         ->js(__DIR__.'/js/dist/admin.js')
         ->css(__DIR__.'/less/admin.less'),
     new Extend\Locales(__DIR__.'/locale'),
+
+    (new Extend\Routes('api'))
+        ->get('/trans', 'language.translator.index', Controller\TranslateApiController::class),
 ];

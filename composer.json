@@ -8,8 +8,7 @@
     "license": "GPL-1.0-or-later",
     "require": {
         "flarum/core": "^1.2.0",
-		 "google/cloud-translate": "^1.17",
-        "guzzlehttp/guzzle": "^7.0.1",
+		"google/cloud-translate": "^1.17"
     },
     "authors": [
         {
