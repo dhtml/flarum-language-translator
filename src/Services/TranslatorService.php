@@ -7,13 +7,26 @@ use Google\Cloud\Core\Exception\GoogleException;
 use Google\Cloud\Translate\V2\TranslateClient;
 use Carbon\Carbon;
 
+use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\Foundation\Application;
+use Illuminate\Contracts\Cache\Repository as Cache;
+
 class TranslatorService
 {
+    protected $settings;
+    protected $app;
+    protected $cache;
 
     protected $google_api_key;
 
-    public function __construct($google_api_key)
+    public function __construct(SettingsRepositoryInterface $settings, Application $app, Cache $cache)
     {
+        $this->settings = $settings;
+        $this->app = $app;
+        $this->cache = $cache;
+    }
+
+    public function setGoogleAPiKey($google_api_key) {
         $this->google_api_key = $google_api_key;
     }
 
@@ -28,12 +41,12 @@ class TranslatorService
     {
         $cacheKey = md5($source . $locale);
 
-        // Check if the translation is already cached, if not cache it forever
-        //$translation = Cache::rememberForever($cacheKey, function () use ($source, $locale) {
+        // Check if the translation is already cached
+        $translation = $this->cache->rememberForever($cacheKey, function () use ($source, $locale, $cacheKey) {
             return $this->translate($source, $locale, $cacheKey);
-        //});
+        });
 
-        //return $translation;
+        return $translation;
     }
 
     /**
@@ -45,7 +58,6 @@ class TranslatorService
      */
     protected function translate($source, $locale , $hash)
     {
-
         $_locale = Locale::query()->where("source",$source)
             ->where("locale",$locale)
             ->first();
