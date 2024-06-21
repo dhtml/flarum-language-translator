@@ -6,7 +6,7 @@ use Dhtml\FlarumLanguageTranslator\Api\Serializer\LocaleSerializer;
 
 use Dhtml\FlarumLanguageTranslator\Locale;
 use Dhtml\FlarumLanguageTranslator\Services\TranslatorService;
-use Flarum\Api\Controller\AbstractCreateController;
+use Flarum\Api\Controller\AbstractShowController;
 
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,7 +21,7 @@ use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\Foundation\Application;
 use Illuminate\Contracts\Cache\Repository as Cache;
 
-class TranslateApiController extends AbstractCreateController
+class TranslateApiController extends AbstractShowController
 {
     public $serializer = LocaleSerializer::class;
 

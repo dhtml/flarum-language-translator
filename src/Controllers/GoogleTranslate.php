@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class HelloWorld implements RequestHandlerInterface
+class GoogleTranslate implements RequestHandlerInterface
 {
     protected $viewRenderer;
 
@@ -24,7 +24,18 @@ class HelloWorld implements RequestHandlerInterface
 
     public function handle(Request $request): ResponseInterface
     {
-        $html = "<h1>Hello World</h1>";
+        $html = '<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Translator Subroutine</title>
+</head>
+<body>
+  <h1>Google Translator Subroutine</h1>
+</body>
+</html>';
+
         return new HtmlResponse($html);
     }
 }

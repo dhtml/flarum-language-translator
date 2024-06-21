@@ -12,6 +12,9 @@
 namespace Dhtml\FlarumLanguageTranslator;
 
 use Dhtml\FlarumLanguageTranslator\Api\Controllers\TranslateApiController;
+use Dhtml\FlarumLanguageTranslator\Controllers\GoogleTranslate;
+use Dhtml\FlarumLanguageTranslator\Middleware\CheckHtmlMiddleware;
+use Flarum\Http\Middleware\DispatchRoute;
 use Flarum\Extend;
 
 
@@ -24,9 +27,19 @@ return [
         ->css(__DIR__.'/less/admin.less'),
     new Extend\Locales(__DIR__.'/locale'),
 
+    (new Extend\Routes('forum'))
+        ->get('/GoogleTranslate', 'google.translate', GoogleTranslate::class),
 
     (new Extend\Routes('api'))
         ->post('/trans', 'language.translator.index', TranslateApiController::class),
 
     (new Extend\Model(Locale::class)),
+
+    (new Extend\Middleware('forum'))
+        ->add(CheckHtmlMiddleware::class),
+
+    /*
+    (new Extend\Middleware('forum'))
+        ->insertAfter(DispatchRoute::class, CheckHtmlMiddleware::class),
+    */
 ];
