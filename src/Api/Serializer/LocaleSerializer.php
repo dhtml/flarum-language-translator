@@ -12,7 +12,6 @@
 namespace Dhtml\FlarumLanguageTranslator\Api\Serializer;
 
 use Flarum\Api\Serializer\AbstractSerializer;
-use Dhtml\FlarumLanguageTranslator\Locale;
 
 class LocaleSerializer extends AbstractSerializer
 {
@@ -29,11 +28,10 @@ class LocaleSerializer extends AbstractSerializer
     protected function getDefaultAttributes($locale)
     {
         $attributes = [
-            'id'          => $locale->id,
-            'hash'       => $locale->hash,
-            'source'        => $locale->source,
-            'locale'        => $locale->locale,
-            'translation'    => $locale->translation,
+            //'id'  => $locale->id,
+            't' => $locale->t,
+            'source' => $locale->source,
+            'locale' => $locale->locale,
         ];
 
         return $attributes;

@@ -24,9 +24,7 @@ class HelloWorld implements RequestHandlerInterface
 
     public function handle(Request $request): ResponseInterface
     {
-        $title = 'Hello, world!';
-        $content = 'This is the content of the page.';
-
+        $html = "<h1>Hello World</h1>";
         return new HtmlResponse($html);
     }
 }

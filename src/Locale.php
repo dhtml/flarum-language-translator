@@ -5,6 +5,12 @@ namespace Dhtml\FlarumLanguageTranslator;
 use Carbon\Carbon;
 use Flarum\Database\AbstractModel;
 
+/**
+ * @property string $hash
+ * @property string $source
+ * @property string $locale
+ * @property string $translation
+ */
 abstract class Locale extends AbstractModel
 {
     /**
@@ -14,27 +20,53 @@ abstract class Locale extends AbstractModel
      */
     protected $table = 'locales';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'hash',
-        'source',
-        'locale',
-        'translation'
-    ];
+    protected $dates = ['created_at', 'updated_at'];
+
+
 
     /**
-     * The attributes that should be cast to native types.
+     * The text formatter instance.
      *
-     * @var array
+     * @var \Flarum\Formatter\Formatter
      */
-    protected $casts = [
-        'hash' => 'string',
-        'source' => 'string',
-        'locale' => 'string',
-        'translation' => 'string',
-    ];
+    protected static $formatter;
+
+    /**
+     * Create a new page.
+     *
+     * @return static
+     */
+    public static function build($hash, $source, $locale, $translation)
+    {
+        $_locale = new static();
+
+        $_locale->hash = $locale;
+        $_locale->source = $source;
+        $_locale->locale = $locale;
+        $_locale->translation = $translation;
+        $_locale->created_at = Carbon::now();
+        $_locale->updated_at = Carbon::now();
+
+        return $_locale;
+    }
+
+    /**
+     * Get the text formatter instance.
+     *
+     * @return \Flarum\Formatter\Formatter
+     */
+    public static function getFormatter()
+    {
+        return static::$formatter;
+    }
+
+    /**
+     * Set the text formatter instance.
+     *
+     * @param \Flarum\Formatter\Formatter $formatter
+     */
+    public static function setFormatter(Formatter $formatter)
+    {
+        static::$formatter = $formatter;
+    }
 }
