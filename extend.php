@@ -37,6 +37,12 @@ return [
 
     (new Extend\Middleware('forum'))
         ->add(CheckHtmlMiddleware::class),
+    (new Extend\Middleware('api'))
+        ->add(CheckHtmlMiddleware::class),
+    /*
+    (new Extend\Middleware('admin'))
+        ->add(CheckHtmlMiddleware::class),
+    */
 
     /*
     (new Extend\Middleware('forum'))

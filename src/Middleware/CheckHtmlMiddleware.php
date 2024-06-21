@@ -14,13 +14,14 @@ class CheckHtmlMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle($request);
 
-        // Only process HTML responses
-        if (strpos($response->getHeaderLine('Content-Type'), 'text/html') !== false) {
+        // Process HTML and JSON responses
+        $contentType = $response->getHeaderLine('Content-Type');
+
+        if (strpos($contentType, 'text/html') !== false || strpos($contentType, 'application/json') !== false || strpos($contentType, 'application/vnd.api+json') !== false) {
             $body = (string) $response->getBody();
-            $body = $this->modifyHtml($body);
+            $body = $this->modifyContent($body, $contentType);
 
-
-            // Convert modified HTML to StreamInterface
+            // Convert modified content to StreamInterface
             $stream = Utils::streamFor($body);
 
             // Create a new response with the modified body
@@ -29,21 +30,54 @@ class CheckHtmlMiddleware implements MiddlewareInterface
 
         return $response;
     }
-
-    protected function modifyHtml(string $html): string
+    protected function modifyContent(string $content, string $contentType): string
     {
-        // Ensure to modify the HTML correctly
-        // Example: Adding a specific text before </body>
-        $search = '</body>';
-        $replace = '<p>Added Text</p></body>';
-        $html = str_replace($search, $replace, $html);
+        if (strpos($contentType, 'text/html') !== false) {
+            // Example modification for HTML: Adding text before </body>
+            $search = '</body>';
+            $replace = '<p>Added Text</p></body>';
+            $content = str_replace($search, $replace, $content);
 
-        $html = str_replace("Translator","Radio",$html);
-        $html = str_replace("Introduce","Personify",$html);
-        $html = str_replace("major","minor",$html);
-        $html = str_replace("Mission","Division",$html);
+            $content = str_replace("Translator","Radio",$content);
+            $content = str_replace("Introduce","Personify",$content);
+            $content = str_replace("major","minor",$content);
+            $content = str_replace("Mission","Division",$content);
 
-        return $html;
+        } elseif (strpos($contentType, 'application/json') !== false) {
+            $data = json_decode($content, true);
+
+            $this->dump($data['data']);
+
+            $data = $this->replaceInJson($data, 'major', 'minor');
+            $content = json_encode($data);
+        } elseif (strpos($contentType, 'application/vnd.api+json') !== false) {
+            $data = json_decode($content, true);
+
+            //$this->dump($data['data']);
+
+            $data = $this->replaceInJson($data, 'major', 'minor');
+            $content = json_encode($data);
+        }
+
+        return $content;
+    }
+
+    protected function replaceInJson($data, $search, $replace)
+    {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->replaceInJson($value, $search, $replace);
+            }
+        } elseif (is_string($data)) {
+            $data = str_replace($search, $replace, $data);
+        }
+        return $data;
+    }
+
+    protected function dump($data)
+    {
+       echo json_encode($data,JSON_PRETTY_PRINT);
+       die();
     }
 
 }
