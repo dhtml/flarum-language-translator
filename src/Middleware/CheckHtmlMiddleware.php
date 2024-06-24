@@ -46,7 +46,7 @@ class CheckHtmlMiddleware implements MiddlewareInterface
         } elseif (strpos($contentType, 'application/json') !== false) {
             $data = json_decode($content, true);
 
-            $this->dump($data['data']);
+            //$this->dump($data['data']);
 
             $data = $this->replaceInJson($data, 'major', 'minor');
             $content = json_encode($data);
