@@ -7,11 +7,24 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Flarum\Locale\Translator;
+use Psr\Log\LoggerInterface;
 
 class CheckHtmlMiddleware implements MiddlewareInterface
 {
+    protected $translator;
+    protected $locale;
+
+    public function __construct(Translator $translator, LoggerInterface $logger)
+    {
+        $this->translator = $translator;
+        $this->logger = $logger;
+    }
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        // Get the current Flarum locale
+        $this->locale = $this->translator->getLocale();
+
         $response = $handler->handle($request);
 
         // Process HTML and JSON responses
@@ -32,6 +45,14 @@ class CheckHtmlMiddleware implements MiddlewareInterface
     }
     protected function modifyContent(string $content, string $contentType): string
     {
+
+        $this->logger->info('Current locale: ' . $this->locale);
+
+        // Get the current Flarum locale
+        //$locale = resolve('flarum.locale');
+
+        //echo $locale;
+
         if (strpos($contentType, 'text/html') !== false) {
             // Example modification for HTML: Adding text before </body>
             $search = '</body>';
