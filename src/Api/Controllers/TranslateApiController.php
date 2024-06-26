@@ -12,14 +12,10 @@ use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
-use Psr\Http\Message\ResponseInterface;
-use Laminas\Diactoros\Response\JsonResponse;
-use Flarum\Http\RequestUtil;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
-
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\Foundation\Application;
 use Illuminate\Contracts\Cache\Repository as Cache;
+use Psr\Log\LoggerInterface;
 
 class TranslateApiController extends AbstractShowController
 {
@@ -31,30 +27,25 @@ class TranslateApiController extends AbstractShowController
 
     protected $config;
     protected $google_api_key;
+    protected $logger;
 
-    public function __construct(SettingsRepositoryInterface $settings, Application $app, Cache $cache)
+    public function __construct(LoggerInterface $logger, SettingsRepositoryInterface $settings, Application $app, Cache $cache)
     {
         $this->settings = $settings;
         $this->app = $app;
         $this->cache = $cache;
+        $this->logger = $logger;
 
-        $baseDir = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__))))));
-
-        $this->config = require $baseDir . '/config.php';
-        $this->google_api_key = $this->config['google_api_key'];
-
-        //echo $this->google_api_key;
+        $this->google_api_key = $this->settings->get('dhtml-language-translator.googleKey');
     }
 
     protected function data(ServerRequestInterface $request, Document $document)
     {
-
         $code = Arr::get($request->getQueryParams(), 'code');
         $source = Arr::get($request->getParsedBody(), 's');
         $locale = Arr::get($request->getParsedBody(), 'l');
 
-        $t = new TranslatorService($this->settings,$this->app,$this->cache);
-        $t->setGoogleAPiKey($this->google_api_key);
+        $t = new TranslatorService($this->settings,$this->app,$this->cache,$this->google_api_key,$this->logger);
 
         $translate = $t->get($source,$locale);
 

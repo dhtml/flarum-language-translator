@@ -13,10 +13,15 @@ namespace Dhtml\FlarumLanguageTranslator;
 
 use Dhtml\FlarumLanguageTranslator\Api\Controllers\TranslateApiController;
 use Dhtml\FlarumLanguageTranslator\Controllers\GoogleTranslate;
-use Dhtml\FlarumLanguageTranslator\Middleware\CheckHtmlMiddleware;
+use Dhtml\FlarumLanguageTranslator\Middleware\TranslatorMiddleware;
 use Flarum\Http\Middleware\DispatchRoute;
 use Flarum\Extend;
 
+use Flarum\Api\Serializer\ForumSerializer;
+use Flarum\Api\Event\Serializing;
+
+use Flarum\Post\PostValidator;
+use Illuminate\Support\Str;
 
 return [
     (new Extend\Frontend('forum'))
@@ -25,6 +30,9 @@ return [
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
         ->css(__DIR__.'/less/admin.less'),
+    (new Extend\Settings())
+        ->serializeToForum('dhtml-language-translator.googleKey', 'dhtml-language-translator.googleKey'),
+
     new Extend\Locales(__DIR__.'/locale'),
 
     (new Extend\Routes('forum'))
@@ -36,16 +44,39 @@ return [
     (new Extend\Model(Locale::class)),
 
     (new Extend\Middleware('forum'))
-        ->add(CheckHtmlMiddleware::class),
+        ->add(TranslatorMiddleware::class),
     (new Extend\Middleware('api'))
-        ->add(CheckHtmlMiddleware::class),
+        ->add(TranslatorMiddleware::class),
+
+    (new Extend\ServiceProvider())
+        ->register(LoggerServiceProvider::class),
+
+    (new Extend\Validator(PostValidator::class))
+        ->configure(function ($flarumValidator, $validator) {
+            $rules = $validator->getRules();
+
+            if (!array_key_exists('content', $rules)) {
+                return;
+            }
+
+            $rules['content'] = array_map(function(string $rule) {
+                if (Str::startsWith($rule, 'max:')) {
+                    return 'max:10000';
+                }
+
+                return $rule;
+            }, $rules['content']);
+
+            $validator->setRules($rules);
+        }),
+
     /*
     (new Extend\Middleware('admin'))
-        ->add(CheckHtmlMiddleware::class),
+        ->add(TranslatorMiddleware::class),
     */
 
     /*
     (new Extend\Middleware('forum'))
-        ->insertAfter(DispatchRoute::class, CheckHtmlMiddleware::class),
+        ->insertAfter(DispatchRoute::class, TranslatorMiddleware::class),
     */
 ];

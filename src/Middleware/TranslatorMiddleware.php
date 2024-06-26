@@ -2,6 +2,7 @@
 
 namespace Dhtml\FlarumLanguageTranslator\Middleware;
 
+use Dhtml\FlarumLanguageTranslator\Services\TranslatorService;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -10,15 +11,34 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Flarum\Locale\Translator;
 use Psr\Log\LoggerInterface;
 
-class CheckHtmlMiddleware implements MiddlewareInterface
+use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\Foundation\Application;
+use Illuminate\Contracts\Cache\Repository as Cache;
+
+class TranslatorMiddleware implements MiddlewareInterface
 {
     protected $translator;
     protected $locale;
 
-    public function __construct(Translator $translator, LoggerInterface $logger)
+    protected $settings;
+    protected $app;
+    protected $cache;
+    protected $config;
+    protected $google_api_key;
+    protected $translatorService;
+    protected $logger;
+
+    public function __construct(Translator $translator, LoggerInterface $logger,SettingsRepositoryInterface $settings, Application $app, Cache $cache)
     {
         $this->translator = $translator;
         $this->logger = $logger;
+
+        $this->settings = $settings;
+        $this->app = $app;
+        $this->cache = $cache;
+        $this->google_api_key = $this->settings->get('dhtml-language-translator.googleKey');
+
+        $this->translatorService = new TranslatorService($this->settings,$this->app,$this->cache,$this->google_api_key,$this->logger);
     }
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -46,59 +66,20 @@ class CheckHtmlMiddleware implements MiddlewareInterface
     protected function modifyContent(string $content, string $contentType): string
     {
 
-        $this->logger->info('Current locale: ' . $this->locale);
-
-        // Get the current Flarum locale
-        //$locale = resolve('flarum.locale');
-
-        //echo $locale;
+        //$this->logger->info('Current locale: ' . $this->locale);
 
         if (strpos($contentType, 'text/html') !== false) {
-            // Example modification for HTML: Adding text before </body>
-            $search = '</body>';
-            $replace = '<p>Added Text</p></body>';
-            $content = str_replace($search, $replace, $content);
-
-            $content = str_replace("Translator","Radio",$content);
-            $content = str_replace("Introduce","Personify",$content);
-            $content = str_replace("major","minor",$content);
-            $content = str_replace("Mission","Division",$content);
-
+            $content = $this->translatorService->translatePage($content,$this->locale);
         } elseif (strpos($contentType, 'application/json') !== false) {
             $data = json_decode($content, true);
-
-            //$this->dump($data['data']);
-
-            $data = $this->replaceInJson($data, 'major', 'minor');
+            $data = $this->translatorService->translateApiData($data,$this->locale);
             $content = json_encode($data);
         } elseif (strpos($contentType, 'application/vnd.api+json') !== false) {
             $data = json_decode($content, true);
-
-            //$this->dump($data['data']);
-
-            $data = $this->replaceInJson($data, 'major', 'minor');
+            $data = $this->translatorService->translateApiData($data,$this->locale);
             $content = json_encode($data);
         }
 
         return $content;
     }
-
-    protected function replaceInJson($data, $search, $replace)
-    {
-        if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                $data[$key] = $this->replaceInJson($value, $search, $replace);
-            }
-        } elseif (is_string($data)) {
-            $data = str_replace($search, $replace, $data);
-        }
-        return $data;
-    }
-
-    protected function dump($data)
-    {
-       echo json_encode($data,JSON_PRETTY_PRINT);
-       die();
-    }
-
 }
