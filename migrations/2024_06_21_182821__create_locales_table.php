@@ -28,6 +28,6 @@ return [
         });
     },
     'down' => function (Builder $schema) {
-        $schema->dropIfExists('locales');
+        //$schema->dropIfExists('locales');
     },
 ];

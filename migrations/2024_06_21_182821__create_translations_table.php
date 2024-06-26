@@ -47,6 +47,6 @@ return [
         });
     },
     'down' => function (Builder $schema) {
-        $schema->dropIfExists('translations');
+        //$schema->dropIfExists('translations');
     },
 ];
