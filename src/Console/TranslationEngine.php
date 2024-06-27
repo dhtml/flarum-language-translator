@@ -18,8 +18,8 @@ class TranslationEngine
      */
     private $logger;
 
-    protected $newTranslation = 10;
-    protected $updatedTranslation = 10;
+    protected $newTranslation = 20;
+    protected $updatedTranslation = 20;
     /**
      * @var TranslatorService
      */
