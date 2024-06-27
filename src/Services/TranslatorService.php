@@ -72,10 +72,6 @@ class TranslatorService
         $this->translator = resolve(Translator::class);
     }
 
-    public function getLocale() {
-        return $this->translator->getLocale();
-    }
-
     /**
      * Translate a string from its detected language to a new locale
      *
@@ -89,7 +85,7 @@ class TranslatorService
 
         // Check if the translation is already cached
 
-        if($cache) {
+        if ($cache) {
             $translation = $this->cache->rememberForever($cacheKey, function () use ($source, $locale, $cacheKey) {
                 return $this->translate($source, $locale, $cacheKey);
             });
@@ -99,8 +95,6 @@ class TranslatorService
 
         return $translation;
     }
-
-
 
     /**
      * Translate a string from its detected language to a new locale
@@ -133,70 +127,43 @@ class TranslatorService
         return $translation;
     }
 
-    protected function translationDriver($html, $locale)
+    protected function translationDriver($html, $locale, $chunk = false)
     {
-        $maxLength = 5000;
-        $translatedHtml = '';
-
-        // Split the HTML content into chunks
-        $chunks = str_split($html, $maxLength);
-
-        // Translate each chunk and combine the results
-        foreach ($chunks as $chunk) {
-            $response = $this->translateHTML($chunk, $locale);
+        if (!$chunk) {
+            $response = $this->translateHTML($html, $locale);
             if (!$response['success']) {
                 return $html; //when there is a failure, return the original and log it
             }
-            $translatedHtml .= $response['content'];
-        }
+            return $response['content'];
+        } else {
+            $maxLength = 5000;
+            $translatedHtml = '';
 
-        return $translatedHtml;
+            // Split the HTML content into chunks
+            $chunks = str_split($html, $maxLength);
+
+            // Translate each chunk and combine the results
+            foreach ($chunks as $chunk) {
+                $response = $this->translateHTML($chunk, $locale);
+                if (!$response['success']) {
+                    return $html; //when there is a failure, return the original and log it
+                }
+                $translatedHtml .= $response['content'];
+            }
+            return $translatedHtml;
+        }
     }
 
     protected function translateHTML(string $html, $locale)
     {
         //return $this->translateWithGoogle($html,$locale);
-        return $this->translateWithLibre($html,$locale);
+        return $this->translateWithLibre($html, $locale);
     }
 
-    protected function translateWithLibre($html,$locale) {
-        $translator = new LibreHTMLTranslator($html, $locale,$this->google_api_key);
-        return $translator->translateHTML();
-    }
-
-        protected function translatewithGoogle($html,$locale) {
-        $response = [
-            "success" => false,
-            "content" => "",
-            "error" => null,
-        ];
-
-        try {
-            $translate = new TranslateClient([
-                'key' => $this->google_api_key
-            ]);
-
-            $tresult = $translate->translate($html, [
-                'target' => $locale
-            ]);
-
-            $response['success'] = true;
-            $response['content'] = $tresult['text'];
-
-        } catch (GoogleException $e) {
-            $response['error'] = $e->getMessage();
-            $this->logInfo("Google API Failed: " . $e->getMessage());
-        }
-
-        return $response;
-    }
-
-    public function logInfo($content)
+    protected function translateWithLibre($html, $locale)
     {
-        $paths = resolve(Paths::class);
-        $logPath = $paths->storage . (DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'language-translator.log');
-        $content = var_export($content, true);
-        file_put_contents($logPath, $content, FILE_APPEND);
+        $translator = new LibreHTMLTranslator($html, $locale, $this->google_api_key);
+        return $translator->translateHTML();
     }
 
     public function translatePage($content)
@@ -329,22 +296,27 @@ class TranslatorService
 
         //decode html
         foreach ($result as $key => &$value) {
-            $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML401, 'UTF-8');;
+            $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML401, 'UTF-8');
         }
 
         return $result;
     }
 
+    public function getLocale()
+    {
+        return $this->translator->getLocale();
+    }
+
     public function translateStoredEntity($entity)
     {
-        $original = (array) json_decode($entity->original);
+        $original = (array)json_decode($entity->original);
         //$this->supportedLocales
         //print_r($original);
 
-        foreach($this->supportedLocales as $locale) {
+        foreach ($this->supportedLocales as $locale) {
             $data = $original;
             foreach ($data as $key => &$value) {
-                    $value = $this->get($value, $locale,false);
+                $value = $this->get($value, $locale, false);
             }
             $processed = json_encode($data);
             $property = "sub_" . $locale;
@@ -357,6 +329,42 @@ class TranslatorService
         $entity->save();
 
         return $entity;
+    }
+
+    protected function translatewithGoogle($html, $locale)
+    {
+        $response = [
+            "success" => false,
+            "content" => "",
+            "error" => null,
+        ];
+
+        try {
+            $translate = new TranslateClient([
+                'key' => $this->google_api_key
+            ]);
+
+            $tresult = $translate->translate($html, [
+                'target' => $locale
+            ]);
+
+            $response['success'] = true;
+            $response['content'] = $tresult['text'];
+
+        } catch (GoogleException $e) {
+            $response['error'] = $e->getMessage();
+            $this->logInfo("Google API Failed: " . $e->getMessage());
+        }
+
+        return $response;
+    }
+
+    public function logInfo($content)
+    {
+        $paths = resolve(Paths::class);
+        $logPath = $paths->storage . (DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'language-translator.log');
+        $content = var_export($content, true);
+        file_put_contents($logPath, $content, FILE_APPEND);
     }
 
     protected function t($content)
