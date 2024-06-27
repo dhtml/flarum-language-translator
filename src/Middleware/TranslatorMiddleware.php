@@ -23,9 +23,9 @@ class TranslatorMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle($request);
 
-        $locale = $this->translatorService->getLocale();
+        //$locale = $this->translatorService->getLocale();
 
-        $this->logInfo(["locale"=>$locale]);
+        //$this->logInfo(["locale"=>$locale]);
 
         // Process HTML and JSON responses
         $contentType = $response->getHeaderLine('Content-Type');

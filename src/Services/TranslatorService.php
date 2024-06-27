@@ -302,7 +302,14 @@ class TranslatorService
             $result = $transData['original'];
         }
 
-        return (array)json_decode($result);
+        $result = (array)json_decode($result);
+
+        //decode html
+        foreach ($result as $key => &$value) {
+            $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML401, 'UTF-8');;
+        }
+
+        return $result;
     }
 
     public function translateStoredEntity($entity)
