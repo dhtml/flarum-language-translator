@@ -223,7 +223,7 @@ class TranslatorService
                                     "title" => $item['attributes']['title'],
                                     "content" => $item['attributes']['content'],
                                 ]);
-                            $item['attributes']['title'] = $tdata['title'];
+                            $item['attributes']['title'] = strip_tags($tdata['title']);
                             $item['attributes']['content'] = $tdata['content'];
                             break;
                         case "discussions":
@@ -231,7 +231,7 @@ class TranslatorService
                                 [
                                     "title" => $item['attributes']['title'],
                                 ]);
-                            $item['attributes']['title'] = $tdata['title'];
+                            $item['attributes']['title'] = strip_tags($tdata['title']);
                             break;
                         case "tags":
                             $tdata = $this->translateEntity($item,
@@ -239,7 +239,7 @@ class TranslatorService
                                     "name" => $item['attributes']['name'],
                                     "description" => $item['attributes']['description'],
                                 ]);
-                            $item['attributes']['name'] = $tdata['name'];
+                            $item['attributes']['name'] = strip_tags($tdata['name']);
                             $item['attributes']['description'] = $tdata['description'];
                             break;
 
@@ -259,7 +259,7 @@ class TranslatorService
                                 [
                                     "name" => $item['attributes']['name'],
                                 ]);
-                            $item['attributes']['name'] = $tdata['name'];
+                            $item['attributes']['name'] = strip_tags($tdata['name']);
                             break;
 
                         case "users":
