@@ -21,25 +21,39 @@ class TranslatorService
 
     protected $locale = "en";
 
+    /*
     protected $supportedLocales = [
-        "en",
-        "am",
-        "ar",
-        "bn",
-        "zh",
-        "fr",
-        "de",
-        "ha",
-        "hi",
-        "ig",
-        "om",
-        "pt",
-        "ru",
-        "sn",
-        "es",
-        "sw",
-        "yo",
-        "zu"
+        "en", // English
+        "am", // Amharic
+        "ar", // Arabic
+        "bn", // Bengali
+        "zh", // Chinese
+        "fr", // French
+        "de", // German
+        "ha", // Hausa
+        "hi", // Hindi
+        "ig", // Igbo
+        "om", // Oromo
+        "pt", // Portuguese
+        "ru", // Russian
+        "sn", // Shona
+        "es", // Spanish
+        "sw", // Swahili
+        "yo", // Yoruba
+        "zu"  // Zulu
+    ];
+    */
+
+    protected $supportedLocales = [
+        "en", // English
+        "ar", // Arabic
+        "zh", // Chinese
+        "fr", // French
+        "de", // German
+        "hi", // Hindi
+        "pt", // Portuguese
+        "ru", // Russian
+        "es", // Spanish
     ];
 
     protected $google_api_key;
@@ -141,6 +155,16 @@ class TranslatorService
 
     protected function translateHTML(string $html, $locale)
     {
+        //return $this->translateWithGoogle($html,$locale);
+        return $this->translateWithLibre($html,$locale);
+    }
+
+    protected function translateWithLibre($html,$locale) {
+        $translator = new LibreHTMLTranslator($html, $locale,$this->google_api_key);
+        return $translator->translateHTML();
+    }
+
+        protected function translatewithGoogle($html,$locale) {
         $response = [
             "success" => false,
             "content" => "",
@@ -162,7 +186,6 @@ class TranslatorService
         } catch (GoogleException $e) {
             $response['error'] = $e->getMessage();
             $this->logInfo("Google API Failed: " . $e->getMessage());
-            $result = $html;
         }
 
         return $response;
