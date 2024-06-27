@@ -265,6 +265,7 @@ class TranslatorService
                 $translation->outdated = 1;
                 $translation->hash = $hash;
                 $translation->original = $original;
+                $translation->updated_at = Carbon::now();
                 $translation->save();
             }
         } else {
@@ -326,6 +327,7 @@ class TranslatorService
         //update the flag
         $entity->translated = 1;
         $entity->outdated = 0;
+        $entity->updated_at = Carbon::now();
         $entity->save();
 
         return $entity;
