@@ -32,7 +32,6 @@ class LibreHTMLTranslator {
         }
         return $texts;
     }
-
     function detectLanguage($text) {
         $url = "https://libretranslate.com/detect";
         $data = [
@@ -50,10 +49,16 @@ class LibreHTMLTranslator {
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
 
+        // Disable SSL verification
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
         $result = curl_exec($ch);
 
         if ($result === FALSE) {
+            $error = curl_error($ch);
             curl_close($ch);
+            trigger_error("cURL Error: $error", E_USER_ERROR);
             return null;
         }
 
@@ -82,10 +87,16 @@ class LibreHTMLTranslator {
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
+        // Disable SSL verification
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
         $result = curl_exec($ch);
 
         if ($result === FALSE) {
+            $error = curl_error($ch);
             curl_close($ch);
+            trigger_error("cURL Error: $error", E_USER_ERROR);
             return $text;
         }
 
@@ -94,6 +105,7 @@ class LibreHTMLTranslator {
         $response = json_decode($result, true);
         return $response['translatedText'] ?? $text;
     }
+
 
 
     protected function containsHtmlTags($string) {
