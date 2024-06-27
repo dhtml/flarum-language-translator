@@ -3,6 +3,7 @@
 namespace Dhtml\FlarumLanguageTranslator\Middleware;
 
 use Dhtml\FlarumLanguageTranslator\Services\TranslatorService;
+use Flarum\Foundation\Paths;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,6 +22,10 @@ class TranslatorMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
+
+        $locale = $this->translatorService->getLocale();
+
+        $this->logInfo(["locale"=>$locale]);
 
         // Process HTML and JSON responses
         $contentType = $response->getHeaderLine('Content-Type');
@@ -57,4 +62,13 @@ class TranslatorMiddleware implements MiddlewareInterface
 
         return $content;
     }
+
+    public function logInfo($content)
+    {
+        $paths = resolve(Paths::class);
+        $logPath = $paths->storage . (DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'language-translator-middleware.log');
+        $content = var_export($content, true);
+        file_put_contents($logPath, $content, FILE_APPEND);
+    }
+
 }

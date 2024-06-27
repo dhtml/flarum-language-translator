@@ -43,6 +43,10 @@ class TranslatorService
     ];
 
     protected $google_api_key;
+    /**
+     * @var Translator|mixed
+     */
+    private $translator;
 
     public function __construct()
     {
@@ -51,10 +55,11 @@ class TranslatorService
         $this->cache = resolve(Cache::class);
         $this->google_api_key = $this->settings->get('dhtml-language-translator.googleKey');
 
-        $translator = resolve(Translator::class);
+        $this->translator = resolve(Translator::class);
+    }
 
-        //get current locale
-        $this->locale = $translator->getLocale();
+    public function getLocale() {
+        return $this->translator->getLocale();
     }
 
     /**
@@ -284,7 +289,7 @@ class TranslatorService
             ]);
         }
 
-        $locale = $this->locale;
+        $locale = $this->getLocale();
 
         $transData = $translation->toArray();
         $result = $transData["sub_" . $locale] ?? null;
@@ -326,7 +331,7 @@ class TranslatorService
 
     protected function t($content)
     {
-        return $this->get($content, $this->locale);
+        return $this->get($content, $this->getLocale());
     }
 
     protected function replaceInJson($data, $search, $replace)
