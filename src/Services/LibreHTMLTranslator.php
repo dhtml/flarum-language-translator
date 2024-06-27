@@ -96,6 +96,14 @@ class LibreHTMLTranslator {
     }
 
 
+    protected function containsHtmlTags($string) {
+        // Regular expression to detect HTML tags
+        $pattern = '/<[^>]+>/';
+
+        // Check if the pattern matches the string
+        return preg_match($pattern, $string) === 1;
+    }
+
     public function translateHTML() {
         $response = [
             "success" => false,
@@ -119,7 +127,13 @@ class LibreHTMLTranslator {
 
             // Return the translated HTML
             $response['success'] = true;
-            $response['content'] = $this->dom->saveHTML();
+            $output =  $this->dom->saveHTML();
+
+            if(!$this->containsHtmlTags($this->html)) {
+                $output = strip_tags($output);
+            }
+
+            $response['content'] = $output;
         } catch (Exception $e) {
             $response['error'] = $e->getMessage();
             $this->logInfo("Libre API Failed: " . $e->getMessage());
