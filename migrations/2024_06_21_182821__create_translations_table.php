@@ -25,6 +25,7 @@ return [
             $table->string('entity', 100);
             $table->longText('original');
             $table->integer('outdated')->default(0);
+            $table->integer('translated')->default(0);
             $table->longText('sub_en')->nullable(); //English
             $table->longText('sub_am')->nullable(); //Amharic
             $table->longText('sub_ar')->nullable(); //Arabic
