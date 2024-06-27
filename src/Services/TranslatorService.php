@@ -309,9 +309,7 @@ class TranslatorService
         foreach($this->supportedLocales as $locale) {
             $data = $original;
             foreach ($data as $key => &$value) {
-                if(is_string($value)) {
                     $value = $this->get($value, $locale,false);
-                }
             }
             $processed = json_encode($data);
             $property = "sub_" . $locale;
