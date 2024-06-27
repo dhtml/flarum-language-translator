@@ -127,16 +127,9 @@ class TranslatorService
         return $translation;
     }
 
-    protected function translationDriver($html, $locale, $chunk = false)
+    protected function translationDriver($html, $locale)
     {
-        if (!$chunk) {
-            $response = $this->translateHTML($html, $locale);
-            if (!$response['success']) {
-                return $html; //when there is a failure, return the original and log it
-            }
-            return $response['content'];
-        } else {
-            $maxLength = 5000;
+            $maxLength = 2000;
             $translatedHtml = '';
 
             // Split the HTML content into chunks
@@ -151,7 +144,6 @@ class TranslatorService
                 $translatedHtml .= $response['content'];
             }
             return $translatedHtml;
-        }
     }
 
     protected function translateHTML(string $html, $locale)

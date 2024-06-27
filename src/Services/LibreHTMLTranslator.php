@@ -117,6 +117,44 @@ class LibreHTMLTranslator {
             $textNodes = $this->extractTextNodes($this->dom->documentElement);
 
             // Translate and replace text nodes
+            $sourceLang = "en"; //default
+            foreach ($textNodes as $textNode) {
+                $sourceLang = $this->detectLanguage($textNode->nodeValue);
+                break;
+            }
+
+            $output = $this->translateText($this->html, $sourceLang);
+
+            // Return the translated HTML
+            $response['success'] = true;
+
+            if(!$this->containsHtmlTags($this->html)) {
+                $output = strip_tags($output);
+            }
+
+            $response['content'] = $output;
+        } catch (Exception $e) {
+            $response['error'] = $e->getMessage();
+            $this->logInfo("Libre API Failed: " . $e->getMessage());
+        }
+
+        return $response;
+    }
+
+
+    public function translateHTMLChunks() {
+        $response = [
+            "success" => false,
+            "content" => "",
+            "error" => null,
+        ];
+
+        try {
+
+            // Extract text nodes
+            $textNodes = $this->extractTextNodes($this->dom->documentElement);
+
+            // Translate and replace text nodes
             foreach ($textNodes as $textNode) {
                 $sourceLang = $this->detectLanguage($textNode->nodeValue);
                 if ($sourceLang) {
