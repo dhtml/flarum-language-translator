@@ -14,10 +14,8 @@ namespace Dhtml\FlarumLanguageTranslator;
 use Dhtml\FlarumLanguageTranslator\Api\Controllers\TranslateApiController;
 use Dhtml\FlarumLanguageTranslator\Controllers\GoogleTranslate;
 use Dhtml\FlarumLanguageTranslator\Middleware\TranslatorMiddleware;
-use Flarum\Http\Middleware\DispatchRoute;
 use Flarum\Extend;
 
-use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Api\Event\Serializing;
 
 use Flarum\Post\PostValidator;
@@ -69,6 +67,10 @@ return [
 
             $validator->setRules($rules);
         }),
+
+    (new Extend\Console())
+        ->command(Console\BatchTranslator::class)
+        ->schedule(Console\BatchTranslator::class, Console\BatchTranslatorSchedule::class),
 
     /*
     (new Extend\Middleware('admin'))

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Dhtml\FlarumLanguageTranslator\Locale;
 use Dhtml\FlarumLanguageTranslator\Translation;
 use Flarum\Foundation\Application;
+use Flarum\Foundation\Paths;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Google\Cloud\Core\Exception\GoogleException;
 use Google\Cloud\Translate\V2\TranslateClient;
@@ -174,10 +175,10 @@ class TranslatorService
 
     public function logInfo($content)
     {
-        $filePath = __DIR__ . '/../../../../../storage/logs/log-info.txt';
+        $paths = resolve(Paths::class);
+        $logPath = $paths->storage.(DIRECTORY_SEPARATOR.'logs'.DIRECTORY_SEPARATOR.'language-translator.log');
         $content = var_export($content, true);
-        //$content = json_encode($content,JSON_PRETTY_PRINT);
-        file_put_contents($filePath, $content, FILE_APPEND);
+        file_put_contents($logPath, $content, FILE_APPEND);
     }
 
     protected function t($content)
