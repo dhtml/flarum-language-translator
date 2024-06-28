@@ -30,7 +30,7 @@ class BatchTranslator extends AbstractCommand
 
     protected function fire()
     {
-        $trans = new TranslationEngine($this);
+        $trans = new TranslationEngine();
         $trans->batchTranslate();
         //$this->logInfo("Batch Translator Mode");
         //$this->info('Hello from Batch Translator!');

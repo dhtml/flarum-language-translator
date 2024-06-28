@@ -11,10 +11,6 @@ use Psr\Log\LoggerInterface;
 class TranslationEngine
 {
     /**
-     * @var BatchTranslator
-     */
-    public $command;
-    /**
      * @var mixed|LoggerInterface
      */
     private $logger;
@@ -26,16 +22,15 @@ class TranslationEngine
      */
     private $translationService;
 
-    public function __construct(BatchTranslator $command)
+    public function __construct()
     {
-        $this->command = $command;
         $this->logger = resolve(LoggerInterface::class);
 
         $this->translationService = new TranslatorService();
     }
 
     public function batchTranslate() {
-        $this->command->showInfo("Initializing Batch Request");
+        $this->showInfo("Initializing Batch Request");
 
         //new translations
         $data_1 = Translation::where("translated",0)->limit($this->newTranslation)->get();
@@ -45,21 +40,23 @@ class TranslationEngine
 
         $rawData = $data_1->merge($data_2);
 
+        $count = $rawData->count();
+        $this->showInfo("Found $count entities");
+
+        $pos = 0;
         foreach ($rawData as $entity) {
+            $pos++;
+            $this->showInfo("Processing $pos / $count");
             $entity = $this->translationService->translateStoredEntity($entity);
             print_r($entity->toArray());
         }
 
-
-        $this->command->showInfo("Completed Batch Request");
+        $this->showInfo("Completed Batch Request");
     }
 
-    public function clearData()
-    {
-        $this->command->showInfo("Clearing translation and locale data");
-        Translation::truncate();
-        Locale::truncate();
-        $this->command->showInfo("Clearing completed");
+    public function showInfo($string) {
+        echo "$string\n";
     }
+
 
 }

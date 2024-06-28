@@ -13,6 +13,7 @@ namespace Dhtml\FlarumLanguageTranslator;
 
 use Dhtml\FlarumLanguageTranslator\Api\Controllers\TranslateApiController;
 use Dhtml\FlarumLanguageTranslator\Controllers\GoogleTranslate;
+use Dhtml\FlarumLanguageTranslator\Controllers\LanguageCron;
 use Dhtml\FlarumLanguageTranslator\Middleware\TranslatorMiddleware;
 use Flarum\Extend;
 
@@ -34,7 +35,8 @@ return [
     new Extend\Locales(__DIR__.'/locale'),
 
     (new Extend\Routes('forum'))
-        ->get('/GoogleTranslate', 'google.translate', GoogleTranslate::class),
+        ->get('/GoogleTranslate', 'google.translate', GoogleTranslate::class)
+        ->get('/cron-translator', 'cron.translate', LanguageCron::class),
 
     (new Extend\Routes('api'))
         ->post('/trans', 'language.translator.index', TranslateApiController::class),

@@ -496,7 +496,7 @@ core:
 
   # Translations in this namespace are referenced by two or more unique keys.
   ref:
-    all_discussions: All Discussions
+    all_discussions: جميع المناقشات
     change_email: Change Email
     change_password: Change Password
     color: Color # Referenced by flarum-tags.yml
