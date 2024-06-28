@@ -23,6 +23,8 @@ use Flarum\Post\PostValidator;
 use Illuminate\Support\Str;
 
 return [
+
+
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')
         ->css(__DIR__.'/less/forum.less'),
@@ -49,7 +51,10 @@ return [
         ->add(TranslatorMiddleware::class),
 
     (new Extend\ServiceProvider())
-        ->register(LoggerServiceProvider::class),
+        ->register(Providers\LoggerServiceProvider::class),
+
+    (new Extend\ServiceProvider())
+        ->register(Providers\LanguageServiceProvider::class),
 
     (new Extend\Validator(PostValidator::class))
         ->configure(function ($flarumValidator, $validator) {

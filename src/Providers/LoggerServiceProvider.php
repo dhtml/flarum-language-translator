@@ -1,6 +1,6 @@
 <?php
 
-namespace Dhtml\FlarumLanguageTranslator;
+namespace Dhtml\FlarumLanguageTranslator\Providers;
 
 use Flarum\Foundation\AbstractServiceProvider;
 use Monolog\Logger;
