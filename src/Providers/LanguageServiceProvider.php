@@ -22,25 +22,54 @@ class LanguageServiceProvider extends AbstractServiceProvider
             $subdomain = '';
         }
 
-        if($subdomain=="") {
-            //root domain
+        $settings = require(__DIR__ . "/../Settings.php");
 
+        if ($subdomain == "") {
+            //root domain hit
+            $subdomain = $this->getUserPreferredLanguage();
+
+            if (!isset($settings["locales"][$subdomain])) {
+                $subdomain = "en"; //default
+            }
+            //redirect to preferred domain
+            $pageUrl = $this->getFullUrl();
+            $rootDomain = str_replace( "://", "://$subdomain.", $pageUrl);
+            header("Location: $rootDomain");
+            exit();
         } else {
-            $settings = require(__DIR__."/../Settings.php");
-            if(isset($settings["locales"][$subdomain])) {
+            if (isset($settings["locales"][$subdomain])) {
                 //set default locale
                 $translator = resolve(Translator::class);
                 $translator->setLocale($subdomain);
             } else {
                 //redirect to root path
                 $pageUrl = $this->getFullUrl();
-                $rootDomain = str_replace($subdomain.".","",$pageUrl);
+                $rootDomain = str_replace($subdomain . ".", "", $pageUrl);
                 header("Location: $rootDomain");
                 exit();
             }
         }
 
     }
+
+    function getUserPreferredLanguage()
+    {
+        if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            return 'en'; // Default to English if header not present
+        }
+
+        $languages = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+
+        // Parse languages from the header (first language code)
+        $preferredLanguage = explode(',', $languages)[0];
+        $preferredLanguage = strtolower(substr($preferredLanguage, 0, 2)); // Extract first two characters (language code)
+
+        // Optionally, you can validate $preferredLanguage against a list of supported languages
+
+        return $preferredLanguage;
+    }
+
+// Function to parse Accept-Language header and extract language codes
 
     private function getFullUrl()
     {
@@ -56,6 +85,5 @@ class LanguageServiceProvider extends AbstractServiceProvider
         $fullUrl = $protocol . $host . $requestUri;
         return $fullUrl;
     }
-
 
 }
