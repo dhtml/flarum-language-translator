@@ -9,6 +9,8 @@ class LanguageServiceProvider extends AbstractServiceProvider
 {
     public function register()
     {
+        if(!isset($_SERVER['HTTP_HOST'])) {return;}
+
         $host = $_SERVER['HTTP_HOST'];
 
         $parts = explode('.', $host);
@@ -24,7 +26,13 @@ class LanguageServiceProvider extends AbstractServiceProvider
 
         $settings = require(__DIR__ . "/../Settings.php");
 
-        if ($subdomain == "") {
+        if(isset($_GET['force']) && $_GET['force']=="1") {
+            //do nothing
+            $redirectUrl = $this->getFullUrl();
+            $redirectUrl = str_replace("?force=1","",$redirectUrl);
+            require(__DIR__."/redirect.php");
+            exit();
+        } else if ($subdomain == "") {
             //root domain hit
             $subdomain = $this->getUserPreferredLanguage();
 
