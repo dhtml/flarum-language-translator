@@ -72,6 +72,9 @@ return [
         ->command(Console\BatchTranslator::class)
         ->schedule(Console\BatchTranslator::class, Console\BatchTranslatorSchedule::class),
 
+    (new Extend\Console())
+        ->command(Console\TranslatorClear::class),
+
     /*
     (new Extend\Middleware('admin'))
         ->add(TranslatorMiddleware::class),

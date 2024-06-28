@@ -139,7 +139,7 @@ class TranslatorService
             foreach ($chunks as $chunk) {
                 $response = $this->translateHTML($chunk, $locale);
                 if (!$response['success']) {
-                    return $html; //when there is a failure, return the original and log it
+                    trigger_error("Unable to translate data");
                 }
                 $translatedHtml .= $response['content'];
             }

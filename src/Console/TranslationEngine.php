@@ -3,6 +3,7 @@
 namespace Dhtml\FlarumLanguageTranslator\Console;
 
 use Carbon\Carbon;
+use Dhtml\FlarumLanguageTranslator\Locale;
 use Dhtml\FlarumLanguageTranslator\Services\TranslatorService;
 use Dhtml\FlarumLanguageTranslator\Translation;
 use Psr\Log\LoggerInterface;
@@ -18,8 +19,8 @@ class TranslationEngine
      */
     private $logger;
 
-    protected $newTranslation = 20;
-    protected $updatedTranslation = 20;
+    protected $newTranslation = 1;
+    protected $updatedTranslation = 1;
     /**
      * @var TranslatorService
      */
@@ -51,6 +52,14 @@ class TranslationEngine
 
 
         $this->command->showInfo("Completed Batch Request");
+    }
+
+    public function clearData()
+    {
+        $this->command->showInfo("Clearing translation and locale data");
+        Translation::truncate();
+        Locale::truncate();
+        $this->command->showInfo("Clearing completed");
     }
 
 }

@@ -73,6 +73,7 @@ class LibreHTMLTranslator {
         $data = [
             'q' => $text,
             'source' => $sourceLang,
+            "format" => "html",
             'target' => $this->targetLang,
             'api_key' => $this->apiKey
         ];
@@ -103,6 +104,7 @@ class LibreHTMLTranslator {
         curl_close($ch);
 
         $response = json_decode($result, true);
+
         return $response['translatedText'] ?? $text;
     }
 
