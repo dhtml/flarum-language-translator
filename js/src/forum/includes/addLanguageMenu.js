@@ -39,6 +39,7 @@ export default function () {
     // Clear existing items
     //items.clear();
 
+    /*
     const languages = {
       "en": "English",
       "am": "አማርኛ",
@@ -58,6 +59,20 @@ export default function () {
       "sw": "Kiswahili",
       "yo": "Yorùbá",
       "zu": "isiZulu"
+    };
+     */
+
+
+    const languages = {
+      "en": "English",
+      "ar": "العربية",
+      "zh": "中文",
+      "fr": "Français",
+      "de": "Deutsch",
+      "hi": "हिन्दी",
+      "pt": "Português",
+      "ru": "Русский",
+      "es": "Español",
     };
 
 

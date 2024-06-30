@@ -2,7 +2,7 @@
 
 return [
     "engine" => "microsoft",
-    "locales" => [
+    "locales_old" => [
         "en" => ["English", "English"],
         "am" => ["Amharic", "አማርኛ"],
         "ar" => ["Arabic", "العربية"],
@@ -21,5 +21,16 @@ return [
         "sw" => ["Swahili", "Kiswahili"],
         "yo" => ["Yoruba", "Yorùbá"],
         "zu" => ["Zulu", "isiZulu"],
-        ]
+        ],
+    "locales" => [
+        "en" => ["English", "English"],
+        "ar" => ["Arabic", "العربية"],
+        "zh" => ["Chinese", "中文"],
+        "fr" => ["French", "Français"],
+        "de" => ["German", "Deutsch"],
+        "hi" => ["Hindi", "हिन्दी"],
+        "pt" => ["Portuguese", "Português"],
+        "ru" => ["Russian", "Русский"],
+        "es" => ["Spanish", "Español"],
+    ]
 ];
