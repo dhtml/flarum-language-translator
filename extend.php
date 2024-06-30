@@ -14,6 +14,7 @@ namespace Dhtml\FlarumLanguageTranslator;
 use Dhtml\FlarumLanguageTranslator\Api\Controllers\TranslateApiController;
 use Dhtml\FlarumLanguageTranslator\Controllers\GoogleTranslate;
 use Dhtml\FlarumLanguageTranslator\Controllers\LanguageCron;
+use Dhtml\FlarumLanguageTranslator\Middleware\LocaleMiddleware;
 use Dhtml\FlarumLanguageTranslator\Middleware\TranslatorMiddleware;
 use Flarum\Extend;
 
@@ -46,7 +47,10 @@ return [
     (new Extend\Model(Locale::class)),
 
     (new Extend\Middleware('forum'))
-        ->add(TranslatorMiddleware::class),
+        ->add(TranslatorMiddleware::class)
+        ->add(LocaleMiddleware::class),
+
+
     (new Extend\Middleware('api'))
         ->add(TranslatorMiddleware::class),
 

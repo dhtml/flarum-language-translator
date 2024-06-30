@@ -33,6 +33,8 @@ export const modifyURL = (url, newSubdomain) => {
 };
 
 export default function () {
+
+
   extend(HeaderSecondary.prototype, 'items', function (items) {
     // Clear existing items
     //items.clear();
