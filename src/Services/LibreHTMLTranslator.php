@@ -103,9 +103,13 @@ class LibreHTMLTranslator {
 
         curl_close($ch);
 
-        $response = json_decode($result, true);
+        $response = @json_decode($result, true);
 
-        return $response['translatedText'] ?? $text;
+        if(!isset($response['translatedText'])) {
+            trigger_error("Failed to transate text");
+        }
+
+        return $response['translatedText'];
     }
 
 
@@ -131,11 +135,13 @@ class LibreHTMLTranslator {
             $textNodes = $this->extractTextNodes($this->dom->documentElement);
 
             // Translate and replace text nodes
-            $sourceLang = "en"; //default
+            $sourceLang = "auto"; //default
+            /*
             foreach ($textNodes as $textNode) {
                 $sourceLang = $this->detectLanguage($textNode->nodeValue);
                 break;
             }
+            */
 
             $output = $this->translateText($this->html, $sourceLang);
 
